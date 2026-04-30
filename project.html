@@ -22,7 +22,16 @@ display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:20px;
 }
-
+.modal-content{
+    background:white;
+    width:70%;
+    max-height:80vh;   /* ✅ LIMIT HEIGHT */
+    overflow-y:auto;   /* ✅ ENABLE SCROLL */
+    margin:5% auto;
+    padding:25px;
+    border-radius:10px;
+    position:relative;
+}
 .section-card{
 background:white;
 padding:20px;
