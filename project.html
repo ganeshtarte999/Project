@@ -173,64 +173,104 @@ window.onclick = (e)=>{
 if(e.target==modal){modal.style.display="none";}
 };
 
-/* CALL PYTHON */
-function calculateRank(){
+function generateMatrix() {
+    let rows = document.getElementById("rows").value;
+    let cols = document.getElementById("cols").value;
 
-let input = document.getElementById("matrixInput").value;
+    let html = "<table border='1' cellpadding='5'>";
 
-let matrix = input.trim().split("\n").map(row =>
-row.split(",").map(x => Number(x.trim()))
-);
+    for (let i = 0; i < rows; i++) {
+        html += "<tr>";
+        for (let j = 0; j < cols; j++) {
+            html += `<td><input type="number" id="cell-${i}-${j}" style="width:60px"></td>`;
+        }
+        html += "</tr>";
+    }
 
-let rank = getRank(matrix);
+    html += "</table>";
 
-document.getElementById("result").innerText = "Rank = " + rank;
+    document.getElementById("matrixContainer").innerHTML = html;
 }
+    function calculateRankStep() {
 
+    let rows = parseInt(document.getElementById("rows").value);
+    let cols = parseInt(document.getElementById("cols").value);
 
-// Gaussian elimination rank
-function getRank(matrix) {
-    let m = matrix.length;
-    let n = matrix[0].length;
-    let rank = n;
+    let matrix = [];
+
+    for (let i = 0; i < rows; i++) {
+        matrix[i] = [];
+        for (let j = 0; j < cols; j++) {
+            let val = document.getElementById(`cell-${i}-${j}`).value;
+            matrix[i][j] = Number(val) || 0;
+        }
+    }
+
+    let stepsDiv = document.getElementById("steps");
+    stepsDiv.innerHTML = "<h3>Steps:</h3>";
+
+    let stepCount = 1;
+
+    function printMatrix(mat, msg) {
+        let html = `<p><b>Step ${stepCount++}: ${msg}</b></p><table border='1' cellpadding='5'>`;
+
+        for (let r of mat) {
+            html += "<tr>";
+            for (let c of r) {
+                html += `<td>${c.toFixed(2)}</td>`;
+            }
+            html += "</tr>";
+        }
+        html += "</table><br>";
+
+        stepsDiv.innerHTML += html;
+    }
+
+    printMatrix(matrix, "Initial Matrix");
+
+    let rank = cols;
 
     for (let row = 0; row < rank; row++) {
 
-        if (matrix[row][row] != 0) {
+        if (matrix[row][row] !== 0) {
 
-            for (let col = 0; col < m; col++) {
-                if (col != row) {
+            for (let col = 0; col < rows; col++) {
+                if (col !== row) {
+
                     let mult = matrix[col][row] / matrix[row][row];
+
                     for (let i = 0; i < rank; i++) {
                         matrix[col][i] -= mult * matrix[row][i];
                     }
+
+                    printMatrix(matrix, `R${col+1} → R${col+1} - (${mult.toFixed(2)})R${row+1}`);
                 }
             }
 
         } else {
 
-            let reduce = true;
+            let swap = false;
 
-            for (let i = row + 1; i < m; i++) {
-                if (matrix[i][row] != 0) {
+            for (let i = row + 1; i < rows; i++) {
+                if (matrix[i][row] !== 0) {
                     [matrix[row], matrix[i]] = [matrix[i], matrix[row]];
-                    reduce = false;
+                    printMatrix(matrix, `Swap R${row+1} and R${i+1}`);
+                    swap = true;
                     break;
                 }
             }
 
-            if (reduce) {
+            if (!swap) {
                 rank--;
-
-                for (let i = 0; i < m; i++)
+                for (let i = 0; i < rows; i++) {
                     matrix[i][row] = matrix[i][rank];
+                }
+                row--;
             }
-
-            row--;
         }
     }
 
-    return rank;
+    document.getElementById("result").innerText = "Final Rank = " + rank;
 }
 
 </script>
