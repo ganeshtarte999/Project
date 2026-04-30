@@ -124,20 +124,25 @@ const contentData = {
 "Simulation": `
 <h3>Matrix Rank Calculator</h3>
 
-<p>Enter matrix (comma separated rows):</p>
+<label>Rows:</label>
+<input type="number" id="rows" min="1" value="3">
 
-<textarea id="matrixInput">
-1,2,3
-4,5,6
-7,8,9
-</textarea>
+<label>Columns:</label>
+<input type="number" id="cols" min="1" value="3">
 
 <br><br>
 
-<button onclick="calculateRank()">Calculate Rank</button>
+<button onclick="generateMatrix()">Create Matrix</button>
 
+<div id="matrixContainer" style="margin-top:15px;"></div>
+
+<br>
+
+<button onclick="calculateRankStep()">Find Rank (Step-by-Step)</button>
+
+<div id="steps" style="margin-top:20px;"></div>
 <h3 id="result"></h3>
-`,
+`
 
 "Posttest": "<p>Solve problems.</p>",
 
