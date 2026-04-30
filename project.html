@@ -173,23 +173,59 @@ function calculateRank(){
 
 let input = document.getElementById("matrixInput").value;
 
-let matrix = input.split("\n").map(row =>
-row.split(",").map(Number)
+let matrix = input.trim().split("\n").map(row =>
+row.split(",").map(x => Number(x.trim()))
 );
 
-fetch("http://127.0.0.1:5000/rank",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({matrix:matrix})
-})
-.then(res=>res.json())
-.then(data=>{
-document.getElementById("result").innerText = "Rank = " + data.rank;
-})
-.catch(()=>{
-document.getElementById("result").innerText="Error connecting to server";
-});
+let rank = getRank(matrix);
 
+document.getElementById("result").innerText = "Rank = " + rank;
+}
+
+
+// Gaussian elimination rank
+function getRank(matrix) {
+    let m = matrix.length;
+    let n = matrix[0].length;
+    let rank = n;
+
+    for (let row = 0; row < rank; row++) {
+
+        if (matrix[row][row] != 0) {
+
+            for (let col = 0; col < m; col++) {
+                if (col != row) {
+                    let mult = matrix[col][row] / matrix[row][row];
+                    for (let i = 0; i < rank; i++) {
+                        matrix[col][i] -= mult * matrix[row][i];
+                    }
+                }
+            }
+
+        } else {
+
+            let reduce = true;
+
+            for (let i = row + 1; i < m; i++) {
+                if (matrix[i][row] != 0) {
+                    [matrix[row], matrix[i]] = [matrix[i], matrix[row]];
+                    reduce = false;
+                    break;
+                }
+            }
+
+            if (reduce) {
+                rank--;
+
+                for (let i = 0; i < m; i++)
+                    matrix[i][row] = matrix[i][rank];
+            }
+
+            row--;
+        }
+    }
+
+    return rank;
 }
 
 </script>
